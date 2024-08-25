@@ -6,13 +6,12 @@
 	let canvas: any;
 
 	onMount(() => {
-		const { sketch } = sketch001(canvas, {
-			canvas: {
-				aspect: {
-					ratio: 21/9,
-					maxFill: 0.8
-				}
-			}
+		const { sketch } = sketch001({
+            canvas: canvas,
+            aspect: {
+                ratio: 21/9,
+                maxFill: 0.8
+            }
 		});
 
 		return {

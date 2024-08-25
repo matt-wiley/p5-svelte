@@ -1,42 +1,48 @@
 import { ConfigHandler } from "$lib/sketchUtils/configHandler";
 
 
-export function sketch001(canvas: any, config: any) {
+export function sketch001(config: any) {
 
     const configHandler = new ConfigHandler(config);
 
-
+    let canvas: any = configHandler.get('canvas', null);
 
     let redrawOnResize: boolean = configHandler.get('canvas.redrawOnResize', false); // TODO: Why is this not working?
-    let aspectRatio: number = configHandler.get('canvas.aspect.ratio', 16/9);
-    let aspectMaxFill: number = configHandler.get('canvas.aspect.maxFill', 1.0);    
-    let width: number = configHandler.get('canvas.width', 400);
-    let height: number = configHandler.get('canvas.height', 400);
+    let aspectRatio: number = configHandler.get('aspect.ratio', 16/9);
+    let aspectMaxFill: number = configHandler.get('aspect.maxFill', 1.0);    
+    let width: number = configHandler.get('width', 400);
+    let height: number = configHandler.get('height', 400);
 
+    let enableLoop: boolean = true;
 
     const kvpStore = new Map();
 
 
-    const toggleFullScreen = (p: any) => {
-        if (p.fullscreen()) {
+    const toggleFullScreen = (sketch: any) => {
+        sketch.noLoop();
+        if (sketch.fullscreen()) {
             aspectMaxFill = kvpStore.get('previousMaxFill');
             kvpStore.delete('previousMaxFill');
-            p.fullscreen(false);
+            sketch.fullscreen(false);
         }
         else {
             kvpStore.set('previousMaxFill', aspectMaxFill);
             aspectMaxFill = 1.0;
-            p.fullscreen(true);
+            sketch.fullscreen(true);
         }
+        setTimeout(() => {
+            sketch.loop();
+        }, 150);
     }
 
     const calculateAspectWidthAndHeight = (p: any, aspectRatio: number, aspectMaxFill: number) => {
         let dimensions;
         const aspectIndex = Math.floor(aspectRatio * 100) - 100;
         // console.log(aspectIndex);
+        const dimensionLimit = p.fullscreen() ? 1 : aspectMaxFill;
         if ( aspectIndex > 0) {
             // Landscape
-            const limitedWidth = p.windowWidth * aspectMaxFill;
+            const limitedWidth = p.windowWidth * dimensionLimit;
             dimensions = { 
                 width: limitedWidth,
                 height: limitedWidth / aspectRatio
@@ -44,7 +50,7 @@ export function sketch001(canvas: any, config: any) {
         }
         else if ( aspectIndex < 0) {
             // Portrait
-            const limitedHeight = p.windowHeight * aspectMaxFill;
+            const limitedHeight = p.windowHeight * dimensionLimit;
             dimensions = { 
                 width: limitedHeight * aspectRatio, 
                 height: limitedHeight 
@@ -80,7 +86,9 @@ export function sketch001(canvas: any, config: any) {
         };
 
         sketch.draw = () => {
-            sketch.background("steelblue");
+            sketch.background("steelblue");f
+            sketch.fill("white");
+            sketch.ellipse(sketch.mouseX, sketch.mouseY, 50, 50);
         };
     };
 
