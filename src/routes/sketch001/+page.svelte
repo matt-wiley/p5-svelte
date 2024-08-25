@@ -3,23 +3,18 @@
 	import { onMount } from 'svelte';
 	import { sketch001 } from './sketch001.ts';
 
-
-    const sketchConfig = {
-        containerId: 'sketch001',
-        canvas: {
-            aspect: {
-                ratio: 9/16,
-                maxFill: 0.8,
-            },
-        }
-    };
-
+	let canvas: any;
 
 	onMount(() => {
-		const { sketch, container } = sketch001(sketchConfig);
+		const { sketch } = sketch001(canvas, {
+			canvas: {
+				aspect: {
+					ratio: 21/9,
+					maxFill: 0.8
+				}
+			}
+		});
 
-        
-        container.querySelector('canvas').style.border = '1px solid blue';
 		return {
 			destroy() {
 				sketch.remove();
@@ -28,18 +23,22 @@
 	});
 </script>
 
-<h1>Sketch001</h1>
-
-<div id={sketchConfig.containerId} style="border: 1px solid red;" />
+<div id="sketch001">
+	<canvas bind:this={canvas} />
+</div>
 
 <style>
-    #sketch001 {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100vw;
-        height: 80vh;
-        background: teal;
-    }
+	#sketch001 {
+        position: relative;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100vw;
+		height: 100vh;
+		background: teal;
+	}
 
+	#sketch001 canvas {
+		border: 1px solid blue;
+	}
 </style>
